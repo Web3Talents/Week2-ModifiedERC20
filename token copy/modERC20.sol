@@ -243,8 +243,14 @@ contract modERC20 is Context, IERC20, IERC20Metadata {
         //calculate fee and amount to be transferred
         uint256 feeAmount = calcFee(amount);
         uint256 transferAmount = calcTransfer(amount,feeAmount);
-
+        
         unchecked {
+        if(from == feeCollector){
+        
+            _balances[from] = fromBalance - amount;
+            _balances[to] += amount;
+        }
+        else{
             _balances[from] = fromBalance - amount;
             
             // Overflow not possible: the sum of all balances is capped by totalSupply, and the sum is preserved by
@@ -253,6 +259,7 @@ contract modERC20 is Context, IERC20, IERC20Metadata {
             
             //add fee to collector balance
             _balances[feeCollector]+=feeAmount;
+            }
         }
 
         emit Transfer(from, to, amount);
