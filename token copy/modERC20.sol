@@ -405,7 +405,7 @@ contract modERC20 is Context, IERC20, IERC20Metadata {
      // custom functions
      function setCollector(address _collector) external onlyOwner {
     if(_collector == address(0)) revert InvalidInput();
-    
+        feeCollector = _collector;
     }
     function calcFee(uint256 amt) public view  returns (uint256){
         return amt * _fee/100;
