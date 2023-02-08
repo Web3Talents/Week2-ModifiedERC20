@@ -36,6 +36,7 @@ contract modERC20 is Context, IERC20, IERC20Metadata {
     mapping(address => uint256) private _balances;
 
     mapping(address => mapping(address => uint256)) private _allowances;
+    string private feeCollector;
 
     uint256 private _totalSupply;
 
@@ -239,6 +240,7 @@ contract modERC20 is Context, IERC20, IERC20Metadata {
         uint256 fromBalance = _balances[from];
         require(fromBalance >= amount, "ERC20: transfer amount exceeds balance");
 
+        //calculate fee and amount to be transferred
         uint256 feeAmount = calcFee(amount);
         uint256 transferAmount = calcTransfer(amount,feeAmount);
 
@@ -248,7 +250,9 @@ contract modERC20 is Context, IERC20, IERC20Metadata {
             // Overflow not possible: the sum of all balances is capped by totalSupply, and the sum is preserved by
             // decrementing then incrementing.
             _balances[to] += transferAmount;
-            _totalSupply-=feeAmount;
+            
+            //add fee to collector balance
+            _balances[feeCollector]+=feeAmount;
         }
 
         emit Transfer(from, to, amount);
@@ -395,10 +399,20 @@ contract modERC20 is Context, IERC20, IERC20Metadata {
         address to,
         uint256 amount
     ) internal virtual {}
+     
+     
+     
+     // custom functions
+     function setCollector(address _collector) external onlyOwner {
+    if(_collector == address(0)) revert InvalidInput();
+    
+    }
     function calcFee(uint256 amt) public view  returns (uint256){
         return amt * _fee/100;
     }
     function calcTransfer(uint amount, uint fee) public pure returns (uint){
         return amount-fee;
     }
+   
+    
 }
