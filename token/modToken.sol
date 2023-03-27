@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity 0.8.17;
-
 import "./modERC20.sol";
-
 contract ModToken is modERC20 {
     //custom errors used for Input Validation and Access Control
     error InvalidInput();
